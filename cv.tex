@@ -1,0 +1,219 @@
+%!TEX TS-program = xelatex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CV template
+% Originally created by Adrien Friggeri
+%Modified by Riadh Brinci August 19
+% Improved by Carmine Benedetto
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[]{cv-class}
+%-----------linkedin email location phone 
+\usepackage{graphicx,xcolor,fontawesome}
+\usetikzlibrary{shadings}
+\usepackage{tikz}
+\usepackage{array}% http://ctan.org/pkg/array
+\usetikzlibrary{shapes.geometric}
+%to list skills
+\usepackage{filecontents}
+\usepackage[nomessages]{fp} % for calculations
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{colormaps}
+\pgfplotstableset{col sep=comma}
+\begin{filecontents}{programming.csv}
+language,years
+TCL,2
+bash,3
+Python,3
+c{/}c++,7
+C\# .Net,8
+Latex,8.5
+Matlab,5
+VHDL,10
+Mathematica,5
+\end{filecontents}
+
+\pgfplotstableread{programming.csv}\data
+\pgfplotstablegetrowsof{\data}
+\pgfmathsetmacro{\nrows}{int(\pgfplotsretval-1)}  
+\pgfmathsetmacro{\step}{360/\pgfplotsretval}  
+\pgfplotstablegetelem{0}{years}\of{\data}\let\basenum=\pgfplotsretval
+
+
+\pgfplotstablecreatecol[
+    create col/assign/.code={%
+        \getthisrow{years}\entry
+        \FPeval\basearea{3.14159*(\basenum+1)*(\basenum+1)/\nrows - 3.14159/\nrows}
+        \FPeval\stepone{((\entry/\basenum)*\basearea*\nrows)/3.14159 + 1}
+        \FProot\steptwo{\stepone}{2}
+        \FPeval\stepthree{\steptwo-1}
+        \edef\entry{\stepthree}%
+        \pgfkeyslet{/pgfplots/table/create col/next content}\entry
+    }]
+    {adjustedradius}\data
+
+\pgfplotsset{colormap/hsv}
+\tikzset{%
+  sector/.style={
+    /utils/exec=\pgfmathparse{int(#1/\nrows*900+50)}%
+      \pgfplotscolormapdefinemappedcolor{\pgfmathresult},
+    top color=mapped color!75!black,
+    bottom color=mapped color,
+    shading angle=#1*\step+\step/2-90,
+    draw=white,
+    very thick
+  }
+}
+%for linkedin map .. icons
+%-----------------------Horizontal Space------------------------------------
+\newcommand{\blank}[1]{\hspace*{#1}}
+%-------------------------------------------------------------------------------------
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue
+}
+\addbibresource{bibliography.bib}
+\RequirePackage{xcolor}
+\definecolor{pblue}{HTML}{0395DE}
+%------------------------------------------
+\begin{document}
+%------------------------------------------
+\raggedright
+\header{ }{Mohamed ALI}
+      {Senior Hardware and Embedded Systems Engineer}
+\vspace{1.15cm}
+%-------------------------added by Brinci Riadh
+\begin{center}
+  \hspace{4cm}\seticon{faMapMarker}     Tunis Tunisia 1000 ,
+    \seticon{faPhone}           +216 12 345 678, 
+    \seticon{faAt}             \underline{\href{mailto:test@gmail.com}{test@gmail.com}} , \\
+   \hspace{4cm}\seticon{faLinkedinSquare}  \underline{\href{https://no.linkedin.com/in/test}{www.linkedin.com/in/test}} ,     
+\end{center}
+%---------------------------------------------------------
+% Fake text to add separator
+%\vspace{1.15cm}
+\fcolorbox{white}{gray}{\parbox{\dimexpr\textwidth+40\fboxsep-2\fboxrule}{%
+   \textcolor{gray} {Mohamed ALI}
+}}
+
+% In the aside, each new line forces a line break
+\begin{aside}
+% \includegraphics[scale=0.2]{img/im.jpg}
+
+%  \includegraphics[scale=0.40]{img/meg2.jpg}
+  	~
+
+\vspace{4.15cm}
+  \section{Life Rule}
+    "Impossible is not a fact. Impossible is nothing."\\
+M. A CLAY
+    ~
+\section{Best Book}
+    
+"No excuse: The power of Self Discipline"\\
+Brain Tracy%} 
+    ~
+
+  \section{Programming}
+\begin{tikzpicture}[thick,scale=0.6, every node/.style={scale=0.7}]
+
+\foreach \i [evaluate={\j=\i+1;}] in {0,...,\nrows}{
+  \pgfplotstablegetelem{\i}{language}\of{\data}\let\language=\pgfplotsretval
+  \pgfplotstablegetelem{\i}{adjustedradius}\of{\data}\let\years=\pgfplotsretval
+
+\node [text=black] 
+      at (0:0) {Agile};
+
+
+  \pgfmathsetmacro\years{\years/2}
+  \path [sector=\i] (\i*\step:1) (\i*\step:1+\years) 
+    arc (\i*\step:\j*\step:1+\years) -- (\j*\step:1)
+    arc (\j*\step:\i*\step:1) -- cycle;
+  \pgfmathparse{int(\years>2)}
+  \ifnum\pgfmathresult=1
+    \node [text=white, font=\bfseries] 
+      at (\i*\step+\step/2:1+\years/2) {\language};
+  \else
+    \node [text=black, font=\bfseries]
+      at (\i*\step+\step/2:1+\years+1/2) {\language};
+  \fi
+}
+\end{tikzpicture}
+\section{Technical Skills}  
+ Embedded Systems, Hardware Accelerator, OOM, OOA, OOD, OOP,  TCP/IP protocols  %} 
+  \section{Most Proud of}
+Leadership, Integrity, Initiative,  Solution and Action-Oriented, Responsibility, Working under-stress%} 
+ \section{Languages}
+  \asidelist{\textbf{Arabic}}
+    {\includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star.png}}
+    \asidelist{\textbf{French}}
+    {\includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star.png}
+    \includegraphics[scale=0.25]{img/star_empty.png}}
+ \asidelist{\textbf{English}}
+    {\includegraphics[scale=0.25]{img/star.png}
+ \includegraphics[scale=0.25]{img/star.png}
+\includegraphics[scale=0.25]{img/star.png}
+\includegraphics[scale=0.25]{img/star.png}
+\includegraphics[scale=0.25]{img/star_empty.png}}
+\end{aside}
+\vspace{0.5cm}
+\section{Experience}
+
+
+\entrymod
+{Job1}
+{Mar.12 -Ongoing}{where}
+I am responsible for
+\begin{itemize}
+\item mission 1  
+\item mission 2 
+\item  mission 3
+\end{itemize}
+~
+
+\entrymod
+ {Job2}
+ {Dec.11 -Ongoing}{where}
+\begin{itemize}
+\item mission 1
+\item mission 2 
+\item mission 3
+\item mission 4
+\end{itemize}
+~
+
+\entrymod
+ {Job3}
+{Oct. 06 -2012}{Tunis, Tunisia}
+\begin{itemize}
+\item mission 1 
+\item mission 2
+\item mission 3 
+\end{itemize}
+~
+
+\section{Education}
+\entrymod
+ {Master's Degree (MSc) in ....}
+{Sep. 06 - 2008}{Engineering School of ....}
+\vspace{0.5cm}
+\entrymod
+ {Engineer's Degree in .....}
+{Sep. 03 - 2006}{Engineering School of ....}
+\vspace{0.5cm}
+\entrymod
+ { Degree }
+{Sep. 01 - 2003}{Preparatory Institute of ....}
+\end{document}
